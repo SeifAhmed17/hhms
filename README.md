@@ -13,17 +13,17 @@ A web application covering the patient journey: registration, appointment bookin
 
 **Team Leader:** Seif Ahmed — 01119470160
 
-| Member | Role |
-|---|---|
-| Seif Ahmed | Backend |
-| Moamen Mahmoud | Backend |
-| Mohammed Ali | Backend |
-| Mohammed Mahmoud | Backend |
-| Marwan Saber | Backend (automation) |
-| Patrick Hany | Frontend / Design |
-| Mohammed Hany | Frontend / Design |
-| Omar Essam | Testing / QA |
-| Ahmed Gamal | Testing / QA |
+| Member | Role | GitHub |
+|---|---|---|
+| Seif Ahmed | Backend | [@SeifAhmed17](https://github.com/SeifAhmed17) |
+| Moamen Mahmoud | Backend | [@moamenAboelazm](https://github.com/moamenAboelazm) |
+| Mohammed Ali | Backend | [@Borha123321](https://github.com/Borha123321) |
+| Mohammed Mahmoud | Backend | [@Mohammed-Mahmoud787](https://github.com/Mohammed-Mahmoud787) |
+| Marwan Saber | Backend (automation) | [@marwansaber3345](https://github.com/marwansaber3345) |
+| Patrick Hany | Frontend / Design | [@patrick856](https://github.com/patrick856) |
+| Mohammed Hany | Frontend / Design | [@Engmohamed89hany](https://github.com/Engmohamed89hany) |
+| Omar Essam | Testing / QA | — |
+| Ahmed Gamal | Testing / QA | — |
 
 ## Features
 
