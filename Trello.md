@@ -42,7 +42,7 @@ We use labels to show which team a card belongs to.
 | 🟦 Blue | `Frontend` | The most common UI color: what users see |
 | 🟨 Yellow | `Testing` | Caution: "check this" |
 | 🟪 Purple | `n8n` | Automation stands apart from normal coding |
-| ⬛ Black | `Whole team` | Neutral: belongs to everyone |
+| ⬛ Black | `Team` | Neutral: belongs to everyone |
 | 🟥 Red | `Bug` | Error: a problem found during testing |
 
 ### Members
@@ -190,7 +190,7 @@ These are the cards on our board, grouped by sprint. They follow our [timeline](
 | S12 · Bugs — Fix the reported bugs (no new features) | 🟩 Backend · 🟦 Frontend · 🟥 Bug |
 | S12 · Bugs — Retest the fixed bugs | 🟨 Testing · 🟥 Bug |
 | S12 · Demo — Prepare the demo script | 🟨 Testing |
-| S12 · Demo — Prepare the presentation | ⬛ Whole team |
+| S12 · Demo — Prepare the presentation | ⬛ Team |
 
 ### Sprint 13 · Dec 21 – 27 (no new features)
 
@@ -198,5 +198,5 @@ These are the cards on our board, grouped by sprint. They follow our [timeline](
 |---|---|
 | S13 · Bugs — Final bug fixes (no new features) | 🟩 Backend · 🟦 Frontend · 🟥 Bug |
 | S13 · Testing — Final full test | 🟨 Testing |
-| S13 · Demo — Demo rehearsal | ⬛ Whole team |
-| S13 · Docs — Final README and documentation update | ⬛ Whole team |
+| S13 · Demo — Demo rehearsal | ⬛ Team |
+| S13 · Docs — Final README and documentation update | ⬛ Team |
