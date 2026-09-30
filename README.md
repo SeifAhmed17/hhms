@@ -60,6 +60,7 @@ The system has five user roles. Each role only sees what it needs.
 
 ## How We Work
 
+- **Agile:** we work in one-week sprints and track every task on our public [Trello board](https://trello.com/b/mb3fqB6Y). Each week has sprint planning, stand-ups, a sprint review and a retrospective. [Trello.md](Trello.md) describes the board, how cards move, and the full backlog of every sprint.
 - **Backend:** the backend team assigns tasks as the project progresses.
 - **Frontend:** one designer builds the staff screens and the other builds the patient portal.
 - **Automation:** Marwan Saber builds the n8n workflows.
