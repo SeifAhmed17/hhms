@@ -1,6 +1,6 @@
 # Hurghada Hospital Management System (HHMS)
 
-A web application covering the patient journey: registration, appointment booking, diagnosis and medical history, prescriptions, and pharmacy dispensing. It acts as a secure electronic medical record (EMR) for hospital staff, and it gives patients a portal to manage their own appointments and view their records.
+A web application covering the patient journey: registration, appointment booking, diagnosis and medical history, prescriptions, pharmacy dispensing, and billing. It acts as a secure electronic medical record (EMR) for hospital staff, and it gives patients a portal to manage their own appointments and view their records.
 
 ## Objectives
 
@@ -31,17 +31,17 @@ The system has five user roles. Each role only sees what it needs.
 
 | Role | What they can do |
 |---|---|
-| **Patient** | Sign up online and manage their profile · Book and cancel their own appointments · View their own medical history (read-only) · View their own prescriptions |
+| **Patient** | Sign up online and manage their profile · Book and cancel their own appointments · View their own medical history (read-only) · View their own prescriptions · View their own receipts |
 | **Doctor** | See their own appointment schedule · Read and write the medical history of **their own patients only** · Write prescriptions |
-| **Receptionist** | Register walk-in patients · Book and cancel appointments on a patient's behalf · Check patients in · Search patients (contact details only, no medical data) |
+| **Receptionist** | Register walk-in patients · Book and cancel appointments on a patient's behalf · Check patients in · Record appointment payments and issue receipts · Search patients (contact details only, no medical data) |
 | **Pharmacist** | See prescriptions waiting to be filled · Dispense medication (stock updates automatically) · Manage medicine stock · Receive low-stock alerts |
 | **Admin** | Full access to the system · Manage staff accounts and departments · Set doctors' working hours |
 
-**Modules:** Patient registration & medical history · Doctor & department management · Appointment scheduling & cancellation · Prescriptions & medication records · Pharmacy inventory
+**Modules:** Patient registration & medical history · Doctor & department management · Appointment scheduling & cancellation · Prescriptions & medication records · Pharmacy inventory · Billing (appointment fees)
 
 **Automations (n8n):** Appointment reminders · Booking and cancellation confirmations · Low-stock alerts to the pharmacist
 
-**Future work (out of the current scope):** Billing and invoices · Hospital admission
+**Future work (out of the current scope):** Hospital admission
 
 ## Tech Stack
 
@@ -85,6 +85,62 @@ backend/HHMS.Api/
 └── Program.cs
 ```
 
+## Database Design
+
+Our SQL Server database has 14 main tables, plus the standard ASP.NET Core Identity tables for logins and roles. Every table has an `Id` primary key, and columns ending in `Id` are foreign keys.
+
+| Group | Table | Columns |
+|---|---|---|
+| People | **Person** | Id, FirstName, LastName, NationalId, PassportNumber, Gender, DateOfBirth, Country, City |
+| | **PhoneNumber** | Id, Number, PersonId |
+| | **ApplicationUser** | Id, Email, PasswordHash, UserType *(ASP.NET Core Identity)* |
+| Roles | **Doctor** | Id, UserId, PersonId, DepartmentId, AppointmentDurationMinutes, Salary |
+| | **Patient** | Id, UserId, PersonId, Allergies, ChronicDiseases, BloodType, PastSurgeries, FamilyHistory, RowVersion |
+| | **Receptionist** | Id, PersonId, UserId, Salary |
+| | **Pharmacist** | Id, PersonId, UserId, Salary |
+| Hospital setup | **Department** | Id, Name, ConsultationFee |
+| | **DoctorSchedule** | Id, DoctorId, DayOfWeek, StartTime, EndTime |
+| Visits | **Appointment** | Id, DoctorId, PatientId, AppointmentDateTime, Status, Complaint, Diagnosis, Notes, RowVersion |
+| | **Prescription** | Id, AppointmentId, AdditionalNotes, Status, DispensedAt, PharmacistId, RowVersion |
+| | **PrescriptionItem** | Id, PrescriptionId, MedicineId, Dosage, Quantity |
+| Pharmacy | **Medicine** | Id, Name, Price, ExpiryDate, Quantity, LowStockThreshold, RowVersion |
+| Billing | **Receipt** | Id, AppointmentId, PaymentMethod, Amount, PaidAt, ReceptionistId |
+
+```mermaid
+erDiagram
+    Person ||--o{ PhoneNumber : has
+    Person ||--o| Doctor : is
+    Person ||--o| Patient : is
+    Person ||--o| Receptionist : is
+    Person ||--o| Pharmacist : is
+    ApplicationUser ||--o| Doctor : "logs in as"
+    ApplicationUser |o--o| Patient : "logs in as"
+    ApplicationUser ||--o| Receptionist : "logs in as"
+    ApplicationUser ||--o| Pharmacist : "logs in as"
+    Department ||--o{ Doctor : employs
+    Doctor ||--o{ DoctorSchedule : "works on"
+    Doctor ||--o{ Appointment : sees
+    Patient ||--o{ Appointment : books
+    Appointment ||--o| Prescription : produces
+    Appointment ||--o| Receipt : "is paid by"
+    Prescription ||--|{ PrescriptionItem : contains
+    Medicine ||--o{ PrescriptionItem : "is prescribed in"
+    Pharmacist ||--o{ Prescription : dispenses
+    Receptionist ||--o{ Receipt : issues
+```
+
+Every table and column is explained in detail in [docs/database-models.md](docs/database-models.md).
+
+**Key design decisions**
+
+- **One `Person` table** holds personal details for everyone, and each role (doctor, patient, receptionist, pharmacist) links to it. `NationalId` or `PassportNumber` identifies a person, since many of our patients in Hurghada are tourists.
+- **Walk-in patients** have no login, so `Patient.UserId` is optional.
+- **Medical history** has two parts: the patient's background (allergies, chronic diseases, blood type, past surgeries, family history) on `Patient`, and each visit's complaint, diagnosis and notes on its `Appointment`.
+- **Doctor schedules** are stored as one row per working day, so each doctor can have different hours on different days.
+- **Concurrent updates:** `Patient`, `Appointment`, `Prescription` and `Medicine` have a `RowVersion` column. If two users edit the same record at the same time, the second save is rejected instead of silently overwriting the first.
+- **Billing:** each department has a consultation fee. The amount is copied into the `Receipt` at payment time, so old receipts stay correct if the fee changes.
+- **Pharmacy stock:** dispensing a prescription lowers `Medicine.Quantity` by each item's quantity. When stock falls below `LowStockThreshold`, the pharmacist is alerted.
+
 ## How We Work
 
 - **Agile:** one-week sprints on our public [Trello board](https://trello.com/b/mb3fqB6Y), with sprint planning, stand-ups, a sprint review and a retrospective each week. See the [Agile Plan](#agile-plan).
@@ -109,7 +165,7 @@ A weekly plan from project start to the final demo. The last two weeks have no n
 | 7 | Nov 9 – 15 | Medical history | Medical history screens | Test the previous week's features |
 | 8 | Nov 16 – 22 | Prescriptions | Prescription screens | Test the previous week's features |
 | 9 | Nov 23 – 29 | Pharmacy: queue, dispensing, stock | Pharmacy screens | Test the previous week's features |
-| 10 | Nov 30 – Dec 6 | n8n automations, catch-up | Polish, responsive layout | Test the previous week's features |
+| 10 | Nov 30 – Dec 6 | n8n automations, billing, catch-up | Billing screens, polish, responsive layout | Test the previous week's features |
 | 11 | Dec 7 – 13 | Catch-up, integration | Catch-up, integration | Full end-to-end test |
 | 12–13 | Dec 14 – 27 | **No new features:** testing, bug fixes, demo and presentation rehearsal | | |
 
@@ -124,7 +180,7 @@ Every planned task lives on our public Trello board.
 | **Visibility** | Public: anyone with the link can view it |
 | **Sprint length** | 1 week (Monday – Sunday) |
 | **Sprints** | 13, from Sep 28 to Dec 27, 2026 |
-| **Cards** | 66 planned tasks |
+| **Cards** | 69 planned tasks |
 
 ### Board Setup
 
@@ -303,7 +359,7 @@ These are the cards on our board, grouped by sprint. They follow our [timeline](
 </details>
 
 <details>
-<summary><b>Sprint 10 · Nov 30 – Dec 6</b> (6 cards)</summary>
+<summary><b>Sprint 10 · Nov 30 – Dec 6</b> (9 cards)</summary>
 
 | Card | Label |
 |---|---|
@@ -313,6 +369,9 @@ These are the cards on our board, grouped by sprint. They follow our [timeline](
 | S10 · Polish — Polish the screens and make them responsive | 🟦 Frontend |
 | S10 · Catch-up — Finish unfinished backend cards | 🟩 Backend |
 | S10 · Automation — Test the automations | 🟨 Testing |
+| S10 · Billing — Record appointment payments and receipts | 🟩 Backend |
+| S10 · Billing — Payment screen for receptionists and receipts screen for patients | 🟦 Frontend |
+| S10 · Billing — Test billing | 🟨 Testing |
 
 </details>
 
