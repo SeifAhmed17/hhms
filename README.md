@@ -48,7 +48,7 @@ The system has five user roles. Each role only sees what it needs.
 | Layer | Technology |
 |---|---|
 | Backend | ASP.NET Core (C#) |
-| Database | SQL Server |
+| Database | SQL Server, hosted online on MonsterASP.NET so the whole team shares one database |
 | Frontend | Next.js (React) |
 | Automation | n8n |
 
@@ -84,18 +84,6 @@ backend/HHMS.Api/
 ├── Filters/      checks that run around controller actions (e.g. validation)
 ├── Config/       settings classes and service registration
 └── Program.cs
-```
-
-**Frontend:** a Next.js app organized by portal, so the staff side and the patient side are kept separate. Folder names in parentheses are Next.js route groups: they group pages without changing the URL.
-
-```
-frontend/
-├── app/
-│   ├── (auth)/      login, sign-up
-│   ├── (staff)/     admin, doctor, reception, pharmacy
-│   └── (patient)/   appointments, medical history, prescriptions
-├── components/      shared UI components
-└── lib/             API calls and helpers
 ```
 
 ## How We Work
