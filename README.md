@@ -82,7 +82,6 @@ backend/HHMS.Api/
 ├── Data/         database context and migrations
 ├── Middleware/   request pipeline steps (e.g. global error handling, logging)
 ├── Filters/      checks that run around controller actions (e.g. validation)
-├── Config/       settings classes and service registration
 └── Program.cs
 ```
 
