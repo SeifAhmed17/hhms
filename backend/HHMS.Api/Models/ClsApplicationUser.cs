@@ -1,11 +1,10 @@
-﻿using System;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace HHMS.Api.Models
 {
-    public class ApplicationUser : IdentityUser
+    public class ClsApplicationUser : IdentityUser
     {
-        public UserType userType { get; init; }
+        public EnUserType UserType { get; set; }
     }
 
 

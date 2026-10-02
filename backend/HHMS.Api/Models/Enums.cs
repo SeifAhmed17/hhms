@@ -1,11 +1,11 @@
 namespace HHMS.Api.Models
 {
-    public enum Gender
+    public enum EnGender
     {
         Male = 1 ,
         Female = 2
     }
-    public enum UserType
+    public enum EnUserType
     {
         Admin = 1, 
         Doctor = 2, 
@@ -13,23 +13,23 @@ namespace HHMS.Api.Models
         Pharmacist = 4 , 
         Patient = 5
     }
-    public enum BloodType
+    public enum EnBloodType
     {
         APositive = 1, ANegative = 2 , BPositive = 3 , BNegative = 4, ABPositive = 5, ABNegative = 6, OPositive = 7, ONegative = 8
     }
-    public enum AppointmentStatus
+    public enum EnAppointmentStatus
     {
         Booked = 1, CheckedIn = 2, Completed = 3, Cancelled = 4
     }
-    public enum PrescriptionStatus
+    public enum EnPrescriptionStatus
     {
         Pending = 1, Dispensed = 2
     }
-    public enum PaymentMethod
+    public enum EnPaymentMethod
     {
         Cash = 1, Card = 2
     }
-    public enum Country
+    public enum EnCountry
     {
         Egypt = 1,
         Iraq = 2,
@@ -56,7 +56,7 @@ namespace HHMS.Api.Models
         India = 23,
         Pakistan = 24
     }
-    public enum City
+    public enum EnGovernorate 
     {
         Monufia = 1,
         Giza = 2,
@@ -86,7 +86,7 @@ namespace HHMS.Api.Models
         NorthSinai = 26,
         SouthSinai = 27
     }
-    public enum DayOfWeek
+    public enum EnDayOfWeek
     {
         Saturday = 1,
         Sunday = 2,
