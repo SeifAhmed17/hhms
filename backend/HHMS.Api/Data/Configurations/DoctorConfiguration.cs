@@ -11,7 +11,7 @@ namespace HHMS.Api.Data.Configurations
            builder.ToTable("Doctors");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.ApplicationUserId).IsRequired();
+            builder.Property(x => x.UserId).IsRequired();
             builder.Property(x => x.PersonId).IsRequired();
             builder.Property(x => x.DepartmentId).IsRequired();
             builder.Property(x => x.AppointmentDurationMinutes).IsRequired();
@@ -23,9 +23,9 @@ namespace HHMS.Api.Data.Configurations
                 .HasForeignKey(x => x.DepartmentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasOne(x => x.ApplicationUser)
+            builder.HasOne(x => x.User)
                 .WithOne()
-                .HasForeignKey<ClsDoctor>(x => x.ApplicationUserId)
+                .HasForeignKey<ClsDoctor>(x => x.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(x => x.Person)
