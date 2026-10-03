@@ -22,7 +22,7 @@ namespace HHMS.Api.Data.Configurations
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(r => r.Receptionist)
-                .WithMany()
+                .WithMany(rc => rc.Receipts)
                 .HasForeignKey(r => r.ReceptionistId)
                 .OnDelete(DeleteBehavior.Restrict);
         }
