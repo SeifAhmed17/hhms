@@ -87,11 +87,11 @@ backend/HHMS.Api/
 
 ## Database Design
 
-Our SQL Server database has 14 main tables, plus the standard ASP.NET Core Identity tables for logins and roles. Every table has an `Id` primary key, and columns ending in `Id` are foreign keys.
+Our SQL Server database has 14 main tables, plus the standard ASP.NET Core Identity tables for logins and roles. Every table has a `Guid` `Id` primary key, and columns ending in `Id` are foreign keys. In code, entity classes use a `Cls` prefix (e.g. `ClsPatient`) and enums an `En` prefix (e.g. `EnGender`).
 
 | Group | Table | Columns |
 |---|---|---|
-| People | **Person** | Id, FirstName, LastName, NationalId, PassportNumber, Gender, DateOfBirth, Country, City |
+| People | **Person** | Id, FirstName, LastName, NationalId, PassportNumber, Gender, DateOfBirth, Country, Governorate |
 | | **PhoneNumber** | Id, Number, PersonId |
 | | **ApplicationUser** | Id, Email, PasswordHash, UserType *(ASP.NET Core Identity)* |
 | Roles | **Doctor** | Id, UserId, PersonId, DepartmentId, AppointmentDurationMinutes, Salary |

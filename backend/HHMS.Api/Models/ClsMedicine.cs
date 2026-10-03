@@ -1,22 +1,15 @@
-using System.ComponentModel.DataAnnotations;
 
 namespace HHMS.Api.Models
 {
     public class ClsMedicine
     {
-        [Key]
-        public Guid Id = Guid.NewGuid();
-        [Required]
-        public string Name { get; set; }
-        [Required]
+  
+        public Guid Id { get; set; }
+        public string Name { get; set; } = "";
         public decimal Price { get; set; }
-        [Required]
         public DateOnly ExpiryDate { get; set; }
-        [Required]
         public int Quantity { get; set; }
-        [Required]
         public int LowStockThreshold { get; set; }
-        [Required]
-        public byte[] RowVersion { get; set; }
+        public byte[] RowVersion { get; set; } = null!;
     }
 }

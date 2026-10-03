@@ -6,75 +6,76 @@ This document explains every entity (table) in our database and every one of its
 
 | Convention | Meaning |
 |---|---|
-| `Id` | The primary key of the table. An `int` that SQL Server generates automatically (1, 2, 3…). |
-| `SomethingId` | A foreign key: it points to the `Id` of another table. `DoctorId` points to `Doctor.Id`. |
-| `UserId` | Points to `ApplicationUser.Id`. ASP.NET Core Identity uses a **`string`** key (a GUID such as `"3f2a…"`), not an `int`. |
+| `Id` | The primary key of the table. A **`Guid`** (a unique 128-bit value such as `3f2a9c1e-…`), generated automatically when a row is added. |
+| `SomethingId` | A foreign key (also a `Guid`): it points to the `Id` of another table. `DoctorId` points to `ClsDoctor.Id`. |
+| `UserId` | Points to `ClsApplicationUser.Id`. Also a `Guid`: we configure ASP.NET Core Identity with Guid keys (`IdentityUser<Guid>`) so every key in the database has the same type. |
 | **Required** | ✅ = must have a value · ❌ = can be empty (`null`) |
 | `RowVersion` | A concurrency token (`byte[]` with `[Timestamp]`). SQL Server changes it automatically on every update. When two users edit the same row, the second save fails instead of overwriting the first. We never set it ourselves. |
 | Money | `decimal` (never `float` or `double`, which cause rounding errors). |
 | Enums | Stored as numbers in the database and used as named values in C#. All enums are listed at the end. |
+| Naming | Entity classes start with `Cls` (`ClsPatient`), enums with `En` (`EnGender`). |
 
 ## Overview
 
 | Group | Entities |
 |---|---|
-| People | [Person](#person) · [PhoneNumber](#phonenumber) · [ApplicationUser](#applicationuser) |
-| Roles | [Doctor](#doctor) · [Patient](#patient) · [Receptionist](#receptionist) · [Pharmacist](#pharmacist) |
-| Hospital setup | [Department](#department) · [DoctorSchedule](#doctorschedule) |
-| Visits | [Appointment](#appointment) · [Prescription](#prescription) · [PrescriptionItem](#prescriptionitem) |
-| Pharmacy | [Medicine](#medicine) |
-| Billing | [Receipt](#receipt) |
+| People | [ClsPerson](#clsperson) · [ClsPhoneNumber](#clsphonenumber) · [ClsApplicationUser](#clsapplicationuser) |
+| Roles | [ClsDoctor](#clsdoctor) · [ClsPatient](#clspatient) · [ClsReceptionist](#clsreceptionist) · [ClsPharmacist](#clspharmacist) |
+| Hospital setup | [ClsDepartment](#clsdepartment) · [ClsDoctorSchedule](#clsdoctorschedule) |
+| Visits | [ClsAppointment](#clsappointment) · [ClsPrescription](#clsprescription) · [ClsPrescriptionItem](#clsprescriptionitem) |
+| Pharmacy | [ClsMedicine](#clsmedicine) |
+| Billing | [ClsReceipt](#clsreceipt) |
 
 ---
 
 ## People
 
-### Person
+### ClsPerson
 
 The personal details of **every human in the system**: doctors, patients, receptionists and pharmacists. Keeping them in one table means we never repeat name, ID or birth-date columns in each role table.
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `12` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
 | `FirstName` | `string` | ✅ | First name. | `Ahmed` |
 | `LastName` | `string` | ✅ | Last name. | `Hassan` |
 | `NationalId` | `string` | ❌ | Egyptian national ID (14 digits). Stored as text because it's an identifier, not a number we calculate with. | `30001011234567` |
 | `PassportNumber` | `string` | ❌ | Passport number for foreigners. Many of our patients in Hurghada are tourists without an Egyptian ID. | `C01X00T47` |
-| `Gender` | `Gender` *(enum)* | ✅ | Male or female. | `Male` |
+| `Gender` | `EnGender` | ✅ | Male or female. | `Male` |
 | `DateOfBirth` | `DateOnly` | ✅ | Birth date. We store this instead of age, because age changes every year and the birth date doesn't. Age is calculated when needed. | `2000-01-01` |
-| `Country` | `Country` *(enum)* | ✅ | Country of residence. | `Egypt` |
-| `City` | `City` *(enum)* | ❌ | City of residence. Can be empty for foreigners whose city isn't in our list. | `Hurghada` |
+| `Country` | `EnCountry` | ✅ | Country of residence. | `Egypt` |
+| `Governorate` | `EnGovernorate` | ❌ | Egyptian governorate of residence. Empty for patients who live outside Egypt. | `RedSea` |
 
 **Rules**
 - Every person must have **at least one** of `NationalId` or `PassportNumber`.
 - A person can have several phone numbers, so phones live in their own table.
 
-**Relationships:** has many `PhoneNumber` · can be one `Doctor`, `Patient`, `Receptionist` or `Pharmacist`.
+**Relationships:** has many `ClsPhoneNumber` · can be one `ClsDoctor`, `ClsPatient`, `ClsReceptionist` or `ClsPharmacist`.
 
-### PhoneNumber
+### ClsPhoneNumber
 
 A phone number that belongs to a person. A person can have more than one (mobile, home, work).
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `40` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
 | `Number` | `string` | ✅ | The phone number. Stored as text to keep the leading `0` or `+`. | `01001234567` |
-| `PersonId` | `int` | ✅ | The person this number belongs to → `Person.Id`. | `12` |
+| `PersonId` | `Guid` | ✅ | The person this number belongs to → `ClsPerson.Id`. | `3f2a9c1e-…` |
 
-### ApplicationUser
+### ClsApplicationUser
 
 A **login account**. It extends `IdentityUser` from ASP.NET Core Identity, which handles passwords, hashing and sign-in for us. Identity stores it in the `AspNetUsers` table.
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `string` | ✅ | Primary key (a GUID generated by Identity). | `"3f2a9c…"` |
+| `Id` | `Guid` | ✅ | Primary key (generated by Identity). | `3f2a9c1e-…` |
 | `Email` | `string` | ✅ | Used to log in. Must be unique. | `ahmed@example.com` |
 | `PasswordHash` | `string` | ✅ | The password, **hashed** by Identity. The real password is never stored. | `AQAAAAIAAYag…` |
-| `UserType` | `UserType` *(enum)* | ✅ | What kind of account this is: Admin, Doctor, Receptionist, Pharmacist or Patient. | `Doctor` |
+| `UserType` | `EnUserType` | ✅ | What kind of account this is: Admin, Doctor, Receptionist, Pharmacist or Patient. | `ClsDoctor` |
 
 **Notes**
 - Identity adds more columns automatically (`UserName`, `EmailConfirmed`, `LockoutEnd`…). We don't manage them by hand.
-- The admin is an `ApplicationUser` with `UserType = Admin`. There is no separate Admin table.
+- The admin is an `ClsApplicationUser` with `UserType = Admin`. There is no separate Admin table.
 
 ---
 
@@ -82,84 +83,84 @@ A **login account**. It extends `IdentityUser` from ASP.NET Core Identity, which
 
 Every role table links a **person** (who they are) to a **user** (how they log in), and adds the details specific to that role.
 
-### Doctor
+### ClsDoctor
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `3` |
-| `UserId` | `string` | ✅ | The doctor's login → `ApplicationUser.Id`. | `"3f2a9c…"` |
-| `PersonId` | `int` | ✅ | The doctor's personal details → `Person.Id`. | `12` |
-| `DepartmentId` | `int` | ✅ | The department the doctor works in → `Department.Id`. | `2` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
+| `UserId` | `Guid` | ✅ | The doctor's login → `ClsApplicationUser.Id`. | `3f2a9c1e-…` |
+| `PersonId` | `Guid` | ✅ | The doctor's personal details → `ClsPerson.Id`. | `3f2a9c1e-…` |
+| `DepartmentId` | `Guid` | ✅ | The department the doctor works in → `ClsDepartment.Id`. | `3f2a9c1e-…` |
 | `AppointmentDurationMinutes` | `int` | ✅ | How long one appointment with this doctor takes. Used to split working hours into bookable slots. | `30` |
 | `Salary` | `decimal` | ✅ | Monthly salary. | `25000.00` |
 
-**Relationships:** belongs to one `Department` · has many `DoctorSchedule` rows · has many `Appointment`s.
+**Relationships:** belongs to one `ClsDepartment` · has many `ClsDoctorSchedule` rows · has many `ClsAppointment`s.
 
-### Patient
+### ClsPatient
 
-A patient, plus the **background part of their medical history**. The visit-by-visit part lives on `Appointment`.
+A patient, plus the **background part of their medical history**. The visit-by-visit part lives on `ClsAppointment`.
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `57` |
-| `UserId` | `string` | ❌ | The patient's login → `ApplicationUser.Id`. **Empty for walk-in patients**, who are registered at the desk and don't have an account. | `null` |
-| `PersonId` | `int` | ✅ | The patient's personal details → `Person.Id`. | `80` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
+| `UserId` | `Guid` | ❌ | The patient's login → `ClsApplicationUser.Id`. **Empty for walk-in patients**, who are registered at the desk and don't have an account. | `null` |
+| `PersonId` | `Guid` | ✅ | The patient's personal details → `ClsPerson.Id`. | `3f2a9c1e-…` |
 | `Allergies` | `string` | ❌ | Known allergies. Doctors must check this before prescribing. | `Penicillin, peanuts` |
 | `ChronicDiseases` | `string` | ❌ | Long-term conditions. | `Type 2 diabetes` |
-| `BloodType` | `BloodType` *(enum)* | ❌ | Blood group, if known. | `OPositive` |
+| `BloodType` | `EnBloodType` | ❌ | Blood group, if known. | `OPositive` |
 | `PastSurgeries` | `string` | ❌ | Previous operations. | `Appendectomy (2019)` |
 | `FamilyHistory` | `string` | ❌ | Relevant illnesses in the family. | `Father: heart disease` |
 | `RowVersion` | `byte[]` | ✅ | Concurrency token. Two doctors editing this patient's background at the same time can't overwrite each other. | *(automatic)* |
 
-**Relationships:** has many `Appointment`s. The full medical history = this row + all the patient's completed appointments.
+**Relationships:** has many `ClsAppointment`s. The full medical history = this row + all the patient's completed appointments.
 
-### Receptionist
+### ClsReceptionist
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `2` |
-| `PersonId` | `int` | ✅ | Personal details → `Person.Id`. | `15` |
-| `UserId` | `string` | ✅ | Login → `ApplicationUser.Id`. | `"8b1d…"` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
+| `PersonId` | `Guid` | ✅ | Personal details → `ClsPerson.Id`. | `3f2a9c1e-…` |
+| `UserId` | `Guid` | ✅ | Login → `ClsApplicationUser.Id`. | `3f2a9c1e-…` |
 | `Salary` | `decimal` | ✅ | Monthly salary. | `9000.00` |
 
-**Relationships:** issues many `Receipt`s.
+**Relationships:** issues many `ClsReceipt`s.
 
-### Pharmacist
+### ClsPharmacist
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `1` |
-| `PersonId` | `int` | ✅ | Personal details → `Person.Id`. | `16` |
-| `UserId` | `string` | ✅ | Login → `ApplicationUser.Id`. | `"c47e…"` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
+| `PersonId` | `Guid` | ✅ | Personal details → `ClsPerson.Id`. | `3f2a9c1e-…` |
+| `UserId` | `Guid` | ✅ | Login → `ClsApplicationUser.Id`. | `3f2a9c1e-…` |
 | `Salary` | `decimal` | ✅ | Monthly salary. | `11000.00` |
 
-**Relationships:** dispenses many `Prescription`s.
+**Relationships:** dispenses many `ClsPrescription`s.
 
 ---
 
 ## Hospital Setup
 
-### Department
+### ClsDepartment
 
 A hospital department, e.g. Cardiology or Pediatrics.
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `2` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
 | `Name` | `string` | ✅ | Department name. Must be unique. | `Cardiology` |
 | `ConsultationFee` | `decimal` | ✅ | The price of one appointment with any doctor in this department. | `400.00` |
 
-**Relationships:** has many `Doctor`s.
+**Relationships:** has many `ClsDoctor`s.
 
-### DoctorSchedule
+### ClsDoctorSchedule
 
 A doctor's working hours on **one day of the week**. A doctor who works 5 days has 5 rows, so hours can differ from day to day. The admin sets these.
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `9` |
-| `DoctorId` | `int` | ✅ | The doctor → `Doctor.Id`. | `3` |
-| `DayOfWeek` | `DayOfWeek` *(.NET enum)* | ✅ | The day these hours apply to. | `Sunday` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
+| `DoctorId` | `Guid` | ✅ | The doctor → `ClsDoctor.Id`. | `3f2a9c1e-…` |
+| `DayOfWeek` | `EnDayOfWeek` | ✅ | The day these hours apply to. | `Sunday` |
 | `StartTime` | `TimeOnly` | ✅ | When the doctor starts receiving patients. | `09:00` |
 | `EndTime` | `TimeOnly` | ✅ | When the doctor stops. Must be after `StartTime`. | `15:00` |
 
@@ -169,17 +170,17 @@ A doctor's working hours on **one day of the week**. A doctor who works 5 days h
 
 ## Visits
 
-### Appointment
+### ClsAppointment
 
 A booked visit between a patient and a doctor. After the visit, it also holds **what happened during the visit** (complaint, diagnosis, notes), which makes it the visit-by-visit part of the medical history.
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `301` |
-| `DoctorId` | `int` | ✅ | The doctor → `Doctor.Id`. | `3` |
-| `PatientId` | `int` | ✅ | The patient → `Patient.Id`. | `57` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
+| `DoctorId` | `Guid` | ✅ | The doctor → `ClsDoctor.Id`. | `3f2a9c1e-…` |
+| `PatientId` | `Guid` | ✅ | The patient → `ClsPatient.Id`. | `3f2a9c1e-…` |
 | `AppointmentDateTime` | `DateTime` | ✅ | When the appointment starts. Must fall inside the doctor's schedule for that day. | `2026-11-08 10:30` |
-| `Status` | `AppointmentStatus` *(enum)* | ✅ | Where the appointment is in its life cycle (see [enums](#enums)). | `CheckedIn` |
+| `AppointmentStatus` | `EnAppointmentStatus` | ✅ | Where the appointment is in its life cycle (see [enums](#enums)). | `CheckedIn` |
 | `Complaint` | `string` | ❌ | Why the patient came, in their words. Filled in during the visit. | `Headache for 3 days` |
 | `Diagnosis` | `string` | ❌ | What the doctor concluded. Filled in during the visit. | `Migraine` |
 | `Notes` | `string` | ❌ | Examination findings and advice. Filled in during the visit. | `BP 120/80. Rest, avoid screens.` |
@@ -187,47 +188,47 @@ A booked visit between a patient and a doctor. After the visit, it also holds **
 
 **Life cycle:** `Booked` → `CheckedIn` (receptionist) → `Completed` (doctor), or `Booked` → `Cancelled`.
 
-**Relationships:** belongs to one `Doctor` and one `Patient` · can have one `Prescription` · can have one `Receipt`.
+**Relationships:** belongs to one `ClsDoctor` and one `ClsPatient` · can have one `ClsPrescription` · can have one `ClsReceipt`.
 
-### Prescription
+### ClsPrescription
 
-The medicines a doctor prescribes during an appointment. The medicines themselves are listed in `PrescriptionItem`.
+The medicines a doctor prescribes during an appointment. The medicines themselves are listed in `ClsPrescriptionItem`.
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `88` |
-| `AppointmentId` | `int` | ✅ | The visit this prescription came from → `Appointment.Id`. | `301` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
+| `AppointmentId` | `Guid` | ✅ | The visit this prescription came from → `ClsAppointment.Id`. | `3f2a9c1e-…` |
 | `AdditionalNotes` | `string` | ❌ | General instructions for the whole prescription. | `Take after meals.` |
-| `Status` | `PrescriptionStatus` *(enum)* | ✅ | `Pending` until the pharmacist dispenses it, then `Dispensed`. The pharmacy queue shows all `Pending` prescriptions. | `Pending` |
+| `Status` | `EnPrescriptionStatus` | ✅ | `Pending` until the pharmacist dispenses it, then `Dispensed`. The pharmacy queue shows all `Pending` prescriptions. | `Pending` |
 | `DispensedAt` | `DateTime` | ❌ | When it was dispensed. Empty while pending. | `2026-11-08 11:15` |
-| `PharmacistId` | `int` | ❌ | Who dispensed it → `Pharmacist.Id`. Empty while pending. | `1` |
+| `PharmacistId` | `Guid` | ❌ | Who dispensed it → `ClsPharmacist.Id`. Empty while pending. | `3f2a9c1e-…` |
 | `RowVersion` | `byte[]` | ✅ | Concurrency token. Two pharmacists can't dispense the same prescription twice. | *(automatic)* |
 
-**Relationships:** belongs to one `Appointment` · contains one or more `PrescriptionItem`s · dispensed by one `Pharmacist`.
+**Relationships:** belongs to one `ClsAppointment` · contains one or more `ClsPrescriptionItem`s · dispensed by one `ClsPharmacist`.
 
-### PrescriptionItem
+### ClsPrescriptionItem
 
 One medicine line on a prescription.
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `140` |
-| `PrescriptionId` | `int` | ✅ | The prescription this line belongs to → `Prescription.Id`. | `88` |
-| `MedicineId` | `int` | ✅ | The medicine → `Medicine.Id`. | `7` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
+| `PrescriptionId` | `Guid` | ✅ | The prescription this line belongs to → `ClsPrescription.Id`. | `3f2a9c1e-…` |
+| `MedicineId` | `Guid` | ✅ | The medicine → `ClsMedicine.Id`. | `3f2a9c1e-…` |
 | `Dosage` | `string` | ✅ | How to take it. | `2 tablets per day for 5 days` |
-| `Quantity` | `int` | ✅ | How many units the pharmacist hands over. This is the amount taken off `Medicine.Quantity` on dispensing. | `2` |
+| `Quantity` | `int` | ✅ | How many units the pharmacist hands over. This is the amount taken off `ClsMedicine.Quantity` on dispensing. | `2` |
 
 ---
 
 ## Pharmacy
 
-### Medicine
+### ClsMedicine
 
 A medicine the pharmacy stocks, with its current stock level.
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `7` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
 | `Name` | `string` | ✅ | Medicine name. Must be unique. | `Panadol Extra` |
 | `Price` | `decimal` | ✅ | Price per unit. | `45.00` |
 | `ExpiryDate` | `DateOnly` | ✅ | When the current stock expires. | `2027-06-30` |
@@ -235,40 +236,42 @@ A medicine the pharmacy stocks, with its current stock level.
 | `LowStockThreshold` | `int` | ✅ | When `Quantity` falls below this number, the pharmacist gets a low-stock alert (sent by n8n). | `20` |
 | `RowVersion` | `byte[]` | ✅ | Concurrency token. Two pharmacists dispensing the last units at the same time can't push stock below zero. | *(automatic)* |
 
-**Relationships:** appears in many `PrescriptionItem`s.
+**Relationships:** appears in many `ClsPrescriptionItem`s.
 
 ---
 
 ## Billing
 
-### Receipt
+### ClsReceipt
 
 Proof that an appointment was paid for. The receptionist records the payment. The patient can view their receipts in the portal.
 
 | Attribute | Type | Required | Description | Example |
 |---|---|---|---|---|
-| `Id` | `int` | ✅ | Primary key. | `512` |
-| `AppointmentId` | `int` | ✅ | The appointment paid for → `Appointment.Id`. | `301` |
-| `PaymentMethod` | `PaymentMethod` *(enum)* | ✅ | How the patient paid. | `Cash` |
-| `Amount` | `decimal` | ✅ | The amount paid. **Copied** from `Department.ConsultationFee` at payment time, so old receipts stay correct if the fee changes later. | `400.00` |
+| `Id` | `Guid` | ✅ | Primary key. | `3f2a9c1e-…` |
+| `AppointmentId` | `Guid` | ✅ | The appointment paid for → `ClsAppointment.Id`. | `3f2a9c1e-…` |
+| `PaymentMethod` | `EnPaymentMethod` | ✅ | How the patient paid. | `Cash` |
+| `Amount` | `decimal` | ✅ | The amount paid. **Copied** from `ClsDepartment.ConsultationFee` at payment time, so old receipts stay correct if the fee changes later. | `400.00` |
 | `PaidAt` | `DateTime` | ✅ | When the payment was made. | `2026-11-08 10:20` |
-| `ReceptionistId` | `int` | ✅ | Who recorded the payment → `Receptionist.Id`. | `2` |
+| `ReceptionistId` | `Guid` | ✅ | Who recorded the payment → `ClsReceptionist.Id`. | `3f2a9c1e-…` |
 
 ---
 
 ## Enums
 
+All enums live in `Models/Enums.cs` and start at `1`, so `0` always means "not set".
+
 | Enum | Values |
 |---|---|
-| `Gender` | `Male`, `Female` |
-| `UserType` | `Admin`, `Doctor`, `Receptionist`, `Pharmacist`, `Patient` |
-| `BloodType` | `APositive`, `ANegative`, `BPositive`, `BNegative`, `ABPositive`, `ABNegative`, `OPositive`, `ONegative` |
-| `AppointmentStatus` | `Booked`, `CheckedIn`, `Completed`, `Cancelled` |
-| `PrescriptionStatus` | `Pending`, `Dispensed` |
-| `PaymentMethod` | `Cash`, `Card` |
-| `Country` | The countries we support, e.g. `Egypt`, … |
-| `City` | The Egyptian cities we support, e.g. `Hurghada`, `Cairo`, … |
-| `DayOfWeek` | Built into .NET (`System.DayOfWeek`): `Sunday` … `Saturday` |
+| `EnGender` | `Male`, `Female` |
+| `EnUserType` | `Admin`, `Doctor`, `Receptionist`, `Pharmacist`, `Patient` |
+| `EnBloodType` | `APositive`, `ANegative`, `BPositive`, `BNegative`, `ABPositive`, `ABNegative`, `OPositive`, `ONegative` |
+| `EnAppointmentStatus` | `Booked`, `CheckedIn`, `Completed`, `Cancelled` |
+| `EnPrescriptionStatus` | `Pending`, `Dispensed` |
+| `EnPaymentMethod` | `Cash`, `Card` |
+| `EnCountry` | 24 countries, e.g. `Egypt`, `SaudiArabia`, `Germany`, `UnitedKingdom`, `Italy`, … |
+| `EnGovernorate` | Egypt's 27 governorates, e.g. `Cairo`, `Giza`, `Alexandria`, `RedSea` (Hurghada), … |
+| `EnDayOfWeek` | `Saturday` (1) … `Friday` (7) |
 
 ---
 
@@ -276,12 +279,12 @@ Proof that an appointment was paid for. The receptionist records the payment. Th
 
 | Step | Who | What changes in the database |
 |---|---|---|
-| 1. Sign up | Patient | New `Person` + `PhoneNumber` + `ApplicationUser` + `Patient` (with `UserId`) |
-| 1b. Walk-in | Receptionist | New `Person` + `PhoneNumber` + `Patient` (no `ApplicationUser`, `UserId` empty) |
-| 2. Book | Patient or receptionist | New `Appointment` with `Status = Booked` |
-| 3. Pay | Receptionist | New `Receipt` with the department's fee |
-| 4. Arrive | Receptionist | `Appointment.Status` → `CheckedIn` |
-| 5. Visit | Doctor | `Appointment.Complaint`, `Diagnosis`, `Notes` filled in · `Status` → `Completed` · may update `Patient` background (e.g. a new allergy) |
-| 6. Prescribe | Doctor | New `Prescription` (`Status = Pending`) + one `PrescriptionItem` per medicine |
-| 7. Dispense | Pharmacist | `Prescription.Status` → `Dispensed`, `DispensedAt` and `PharmacistId` set · each `Medicine.Quantity` reduced by the item's `Quantity` |
-| 8. Low stock | System (n8n) | If `Medicine.Quantity` < `LowStockThreshold`, the pharmacist is alerted |
+| 1. Sign up | Patient | New `ClsPerson` + `ClsPhoneNumber` + `ClsApplicationUser` + `ClsPatient` (with `UserId`) |
+| 1b. Walk-in | Receptionist | New `ClsPerson` + `ClsPhoneNumber` + `ClsPatient` (no `ClsApplicationUser`, `UserId` empty) |
+| 2. Book | Patient or receptionist | New `ClsAppointment` with `AppointmentStatus = Booked` |
+| 3. Pay | Receptionist | New `ClsReceipt` with the department's fee |
+| 4. Arrive | Receptionist | `ClsAppointment.AppointmentStatus` → `CheckedIn` |
+| 5. Visit | Doctor | `ClsAppointment.Complaint`, `Diagnosis`, `Notes` filled in · `AppointmentStatus` → `Completed` · may update `ClsPatient` background (e.g. a new allergy) |
+| 6. Prescribe | Doctor | New `ClsPrescription` (`Status = Pending`) + one `ClsPrescriptionItem` per medicine |
+| 7. Dispense | Pharmacist | `ClsPrescription.Status` → `Dispensed`, `DispensedAt` and `PharmacistId` set · each `ClsMedicine.Quantity` reduced by the item's `Quantity` |
+| 8. Low stock | System (n8n) | If `ClsMedicine.Quantity` < `LowStockThreshold`, the pharmacist is alerted |
