@@ -8,19 +8,18 @@ namespace HHMS.Api.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<ClsPrescriptionItem> builder)
         {
-            builder.ToTable("PrescriptionItems");
+            builder.ToTable("PrescriptionItems", t => t.HasCheckConstraint("CK_PrescriptionItems_Quantity", "[Quantity] > 0"));
             builder.HasKey(pi => pi.Id);
 
             builder.Property(pi => pi.Dosage).IsRequired().HasMaxLength(200);
-            builder.Property(pi => pi.Quantity).IsRequired();
 
-            builder.HasOne(p => p.Prescription).WithMany()
-                   .HasForeignKey(p => p.PrescriptionId)
+            builder.HasOne(pi => pi.Prescription).WithMany()
+                   .HasForeignKey(pi => pi.PrescriptionId)
                    .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(p => p.Medicine).WithMany()
-                   .HasForeignKey(p => p.MedicineId)
-                   .OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(pi => pi.Medicine).WithMany()
+                   .HasForeignKey(pi => pi.MedicineId)
+                   .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

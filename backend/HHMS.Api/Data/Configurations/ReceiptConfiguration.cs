@@ -11,17 +11,20 @@ namespace HHMS.Api.Data.Configurations
             builder.ToTable("Receipts");
             builder.HasKey(r => r.Id);
 
-            builder.Property(r => r.Amount)
-                   .HasColumnType("decimal(18,2)")
-                   .IsRequired();
-
+            builder.Property(r => r.Amount).HasPrecision(18, 2)
+                .IsRequired();
             builder.Property(r => r.PaidAt).IsRequired();
             builder.Property(r => r.PaymentMethod).IsRequired();
 
             builder.HasOne(r => r.Appointment)
                 .WithOne()
-                .HasForeignKey(static r => r.AppointmentId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey<ClsReceipt>(r => r.AppointmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(r => r.Receptionist)
+                .WithMany()
+                .HasForeignKey(r => r.ReceptionistId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
