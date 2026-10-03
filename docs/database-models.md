@@ -10,10 +10,11 @@ This document explains every entity (table) in our database and every one of its
 | `SomethingId` | A foreign key (also a `Guid`): it points to the `Id` of another table. `DoctorId` points to `ClsDoctor.Id`. |
 | `UserId` | Points to `ClsApplicationUser.Id`. Also a `Guid`: we configure ASP.NET Core Identity with Guid keys (`IdentityUser<Guid>`) so every key in the database has the same type. |
 | **Required** | ✅ = must have a value · ❌ = can be empty (`null`) |
-| `RowVersion` | A concurrency token (`byte[]` with `[Timestamp]`). SQL Server changes it automatically on every update. When two users edit the same row, the second save fails instead of overwriting the first. We never set it ourselves. |
+| `RowVersion` | A concurrency token (`byte[]`, configured with `.IsRowVersion()` in its configuration class). SQL Server changes it automatically on every update. When two users edit the same row, the second save fails instead of overwriting the first. We never set it ourselves. |
 | Money | `decimal` (never `float` or `double`, which cause rounding errors). |
 | Enums | Stored as numbers in the database and used as named values in C#. All enums are listed at the end. |
-| Naming | Entity classes start with `Cls` (`ClsPatient`), enums with `En` (`EnGender`). |
+| Naming | Entity classes start with `Cls` (`ClsPatient`), enums with `En` (`EnGender`), configurations end with `Configuration` (`MedicineConfiguration`). |
+| Configuration | Keys, lengths, relationships and concurrency are set with the Fluent API in `Data/Configurations/` (one `IEntityTypeConfiguration` class per entity), not with attributes on the models. |
 
 ## Overview
 

@@ -71,7 +71,7 @@ hhms/
 └── README.md
 ```
 
-**Backend:** one ASP.NET Core Web API project, organized by type of file. The API returns JSON only (no server-rendered views).
+**Backend:** one ASP.NET Core Web API project, organized by type of file. The API returns JSON only (no server-rendered views). Database rules are written with EF Core's Fluent API in `Data/Configurations/`, one class per entity, so the model classes stay clean.
 
 ```
 backend/HHMS.Api/
@@ -80,6 +80,7 @@ backend/HHMS.Api/
 ├── Models/       database entities (Patient, Doctor, Appointment, ...)
 ├── DTOs/         request and response objects
 ├── Data/         database context and migrations
+│   └── Configurations/   database rules for each entity (keys, lengths, relationships)
 ├── Middleware/   request pipeline steps (e.g. global error handling, logging)
 ├── Filters/      checks that run around controller actions (e.g. validation)
 └── Program.cs
