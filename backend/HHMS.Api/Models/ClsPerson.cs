@@ -2,7 +2,8 @@ namespace HHMS.Api.Models
 {
     public class ClsPerson
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.CreateVersion7();
+
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";
         public string? NationalId { get; set; }

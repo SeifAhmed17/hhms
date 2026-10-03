@@ -2,7 +2,7 @@ namespace HHMS.Api.Models
 {
     public class ClsPharmacist
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; set; } = Guid.CreateVersion7();
 
         public Guid PersonId { get; set; }
         public ClsPerson Person { get; set; } = null!;
