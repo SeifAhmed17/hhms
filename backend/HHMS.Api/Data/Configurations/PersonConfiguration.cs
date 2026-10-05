@@ -31,6 +31,11 @@ namespace HHMS.Api.Data.Configurations
                 .IsRequired();
             builder.Property(x => x.Governorate)
                 .IsRequired(false);
+
+
+
+            builder.HasIndex(p => p.NationalId).IsUnique();
+            builder.HasIndex(p => p.PassportNumber).IsUnique();
         }
     }
 }

@@ -13,7 +13,7 @@ namespace HHMS.Api.Data.Configurations
 
             builder.Property(pi => pi.Dosage).IsRequired().HasMaxLength(200);
 
-            builder.HasOne(pi => pi.Prescription).WithMany()
+            builder.HasOne(pi => pi.Prescription).WithMany(p => p.Items)
                    .HasForeignKey(pi => pi.PrescriptionId)
                    .OnDelete(DeleteBehavior.Cascade);
 

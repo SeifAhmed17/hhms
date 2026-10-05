@@ -7,6 +7,6 @@ namespace HHMS.Api.Models
         public EnDayOfWeek DayOfWeek { get; set; }
         public TimeOnly StartTime { get; set; }
         public TimeOnly EndTime { get; set; }
-        public ClsDoctor Doctor { get; set; }
+        public ClsDoctor Doctor { get; set; } = null!;
     }
 }
