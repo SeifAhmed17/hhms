@@ -19,7 +19,7 @@ namespace HHMS.Api.Data.Configurations
 
 
             builder.HasOne(x => x.Department)
-                .WithMany()
+                .WithMany(d => d.Doctors)
                 .HasForeignKey(x => x.DepartmentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
