@@ -5,6 +5,6 @@ namespace HHMS.Api.Models
         public Guid Id {get;set;}= Guid.CreateVersion7();
         public string Name { get; set; } = "";
         public decimal ConsultationFee {get; set;}
-        public IEnumerable<ClsDoctor> Doctors { get; set; } = null!;
+        public ICollection<ClsDoctor> Doctors { get; set; } = new List<ClsDoctor>();
     }
 }

@@ -8,9 +8,9 @@ namespace HHMS.Api.Models
         public Guid DepartmentId { get; set; }
         public int AppointmentDurationMinutes { get; set; }
         public decimal Salary { get; set; }
-        public ClsDepartment Department { get; set; }
-        public ClsApplicationUser User { get; set; }
-        public ClsPerson Person { get; set; }
+        public ClsDepartment Department { get; set; } = null!;
+        public ClsApplicationUser User { get; set; } = null!;
+        public ClsPerson Person { get; set; } = null!;
         public List<ClsDoctorSchedule> DoctorSchedules { get; set; } = new List<ClsDoctorSchedule>();
         public List<ClsAppointment> Appointments { get; set; } = new List<ClsAppointment>();
     }
