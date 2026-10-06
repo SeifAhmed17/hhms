@@ -418,3 +418,10 @@ These are the cards on our board, grouped by sprint. They follow our [timeline](
 | Project planning (scope, roles, features, timeline, tech stack) | Whole team | Sep 28, 2026 |
 | Agile plan and Trello board setup | Whole team | Sep 30, 2026 |
 | Project structure | Whole team | Oct 2, 2026 |
+| Model skeletons, enums, Identity user and `AppDbContext` | Moamen Mahmoud | Oct 3–4, 2026 |
+| Doctor and DoctorSchedule models and configurations | Moamen Mahmoud | Oct 4, 2026 |
+| Person, PhoneNumber, Patient, Receptionist and Pharmacist models and configurations | Marwan Saber | Oct 3–5, 2026 |
+| Medicine model; Receipt and PrescriptionItem models and configurations | Mohammed Ali | Oct 3–4, 2026 |
+| Appointment, Prescription and Department models and configurations; Medicine configuration | Seif Ahmed | Oct 3–5, 2026 |
+| Initial database migration (20 tables on SQL Server) | Seif Ahmed | Oct 5, 2026 |
+| Code reviews and merging (pull requests #1–#6) | Seif Ahmed, Moamen Mahmoud | Oct 3–5, 2026 |
