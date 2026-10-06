@@ -48,6 +48,7 @@ The system has five user roles. Each role only sees what it needs.
 | Layer | Technology |
 |---|---|
 | Backend | ASP.NET Core (C#) |
+| Authentication | ASP.NET Core Identity + JWT tokens |
 | Database | SQL Server, hosted online on MonsterASP.NET so the whole team shares one database |
 | Frontend | Next.js (React) |
 | Automation | n8n |
@@ -55,7 +56,7 @@ The system has five user roles. Each role only sees what it needs.
 **Why this stack**
 
 - **We already know C#**, so the backend team can start building right away.
-- **Security is built in.** ASP.NET Core has built-in authentication and role-based authorization, which suits a system holding sensitive medical records.
+- **Security is built in.** ASP.NET Core has built-in authentication and role-based authorization, which suits a system holding sensitive medical records. Users log in with **JWT tokens**, which our separate Next.js frontend sends with every API request.
 - **Modern and in demand.** These tools are widely used in industry.
 
 ## Project Structure
