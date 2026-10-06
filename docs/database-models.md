@@ -260,7 +260,7 @@ Proof that an appointment was paid for. The receptionist records the payment. Th
 
 ## Enums
 
-All enums live in `Models/Enums.cs` and start at `1`, so `0` always means "not set".
+All enums live in `Data/Models/Enums.cs` and start at `1`, so `0` always means "not set".
 
 | Enum | Values |
 |---|---|

@@ -77,10 +77,12 @@ hhms/
 backend/HHMS.Api/
 ├── Controllers/  one API controller per module (Patients, Appointments, ...)
 ├── Services/     business logic for each module
-├── Models/       database entities (Patient, Doctor, Appointment, ...)
-├── DTOs/         request and response objects
-├── Data/         database context and migrations
-│   └── Configurations/   database rules for each entity (keys, lengths, relationships)
+├── Data/         everything about data
+│   ├── AppDbContext.cs   database context
+│   ├── Models/           database entities (Patient, Doctor, Appointment, ...)
+│   ├── DTOs/             request and response objects
+│   ├── Configurations/   database rules for each entity (keys, lengths, relationships)
+│   └── Migrations/       database schema history
 ├── Middleware/   request pipeline steps (e.g. global error handling, logging)
 ├── Filters/      checks that run around controller actions (e.g. validation)
 └── Program.cs
@@ -153,7 +155,7 @@ Every table and column is explained in detail in [docs/database-models.md](docs/
 
 ## Timeline
 
-A weekly plan from project start to the final demo. The last two weeks have no new features and are reserved for testing, bug fixes and demo preparation.
+A weekly plan from project start to final delivery on **December 25, 2026**, when everything must be working. New features stop on **December 11**; the last two weeks are reserved for testing, bug fixes and demo preparation.
 
 | Week | Dates | Backend | Frontend | Testing |
 |---|---|---|---|---|
@@ -167,8 +169,8 @@ A weekly plan from project start to the final demo. The last two weeks have no n
 | 8 | Nov 16 – 22 | Prescriptions | Prescription screens | Test the previous week's features |
 | 9 | Nov 23 – 29 | Pharmacy: queue, dispensing, stock | Pharmacy screens | Test the previous week's features |
 | 10 | Nov 30 – Dec 6 | n8n automations, billing, catch-up | Billing screens, polish, responsive layout | Test the previous week's features |
-| 11 | Dec 7 – 13 | Catch-up, integration | Catch-up, integration | Full end-to-end test |
-| 12–13 | Dec 14 – 27 | **No new features:** testing, bug fixes, demo and presentation rehearsal | | |
+| 11 | Dec 7 – 11 | Catch-up, integration | Catch-up, integration | Full end-to-end test |
+| 12–13 | Dec 12 – 25 | **No new features:** testing, bug fixes, demo and presentation rehearsal | | |
 
 ## Agile Plan
 
@@ -180,7 +182,7 @@ Every planned task lives on our public Trello board.
 | **Workspace** | [HHMS](https://trello.com/w/hhms1) |
 | **Visibility** | Public: anyone with the link can view it |
 | **Sprint length** | 1 week (Monday – Sunday) |
-| **Sprints** | 13, from Sep 28 to Dec 27, 2026 |
+| **Sprints** | 13, from Sep 28 to Dec 25, 2026 (feature freeze Dec 11) |
 | **Cards** | 69 planned tasks |
 
 ### Board Setup
@@ -377,7 +379,7 @@ These are the cards on our board, grouped by sprint. They follow our [timeline](
 </details>
 
 <details>
-<summary><b>Sprint 11 · Dec 7 – 13</b> (3 cards)</summary>
+<summary><b>Sprint 11 · Dec 7 – 11</b> (3 cards)</summary>
 
 | Card | Label |
 |---|---|
@@ -388,7 +390,7 @@ These are the cards on our board, grouped by sprint. They follow our [timeline](
 </details>
 
 <details>
-<summary><b>Sprint 12 · Dec 14 – 20 (no new features)</b> (4 cards)</summary>
+<summary><b>Sprint 12 · Dec 12 – 18 (no new features)</b> (4 cards)</summary>
 
 | Card | Label |
 |---|---|
@@ -400,7 +402,7 @@ These are the cards on our board, grouped by sprint. They follow our [timeline](
 </details>
 
 <details>
-<summary><b>Sprint 13 · Dec 21 – 27 (no new features)</b> (4 cards)</summary>
+<summary><b>Sprint 13 · Dec 19 – 25 (no new features)</b> (4 cards)</summary>
 
 | Card | Label |
 |---|---|
