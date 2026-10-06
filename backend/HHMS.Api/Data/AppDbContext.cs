@@ -9,6 +9,7 @@ namespace HHMS.Api.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
+
         }
 
         public DbSet<ClsPerson> People { get; set; }
