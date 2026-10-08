@@ -154,6 +154,14 @@ Every table and column is explained in detail in [docs/database-models.md](docs/
 - **Testing:** Omar Essam and Ahmed Gamal test each feature as it's finished, report bugs, and track our progress.
 - Credit for every finished task is recorded in the [Contributions](#contributions) table below.
 
+## Course Deliverables
+
+| Deliverable | Due | Document |
+|---|---|---|
+| Project proposal | October 11, 2026 | [PDF](docs/deliverables/HHMS%20-%20Project%20Proposal.pdf) · [Word](docs/deliverables/HHMS%20-%20Project%20Proposal.docx) |
+| Project management plan | October 11, 2026 | [PDF](docs/deliverables/HHMS%20-%20Project%20Management%20Plan.pdf) · [Word](docs/deliverables/HHMS%20-%20Project%20Management%20Plan.docx) |
+| Demonstration, presentation and documentation | December 25, 2026 | To come |
+
 ## Timeline
 
 A weekly plan from project start to final delivery on **December 25, 2026**, when everything must be working. New features stop on **December 11**; the last two weeks are reserved for testing, bug fixes and demo preparation.
