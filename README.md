@@ -50,13 +50,13 @@ The system has five user roles. Each role only sees what it needs.
 | Backend | ASP.NET Core (C#) |
 | Authentication | ASP.NET Core Identity + JWT tokens |
 | Database | SQL Server, hosted online on MonsterASP.NET so the whole team shares one database |
-| Frontend | Next.js (React) |
+| Frontend | React with TanStack Start (Vite), Tailwind CSS and shadcn/ui |
 | Automation | n8n |
 
 **Why this stack**
 
 - **We already know C#**, so the backend team can start building right away.
-- **Security is built in.** ASP.NET Core has built-in authentication and role-based authorization, which suits a system holding sensitive medical records. Users log in with **JWT tokens**, which our separate Next.js frontend sends with every API request.
+- **Security is built in.** ASP.NET Core has built-in authentication and role-based authorization, which suits a system holding sensitive medical records. Users log in with **JWT tokens**, which our separate React frontend sends with every API request.
 - **Modern and in demand.** These tools are widely used in industry.
 
 ## Project Structure
@@ -66,7 +66,7 @@ Everything lives in this one repository.
 ```
 hhms/
 ├── backend/      ASP.NET Core Web API
-├── frontend/     Next.js app
+├── frontend/     React web app (TanStack Start)
 ├── n8n/          exported n8n workflows (.json)
 ├── docs/         diagrams, database schema, reports
 └── README.md
