@@ -105,7 +105,7 @@ Our SQL Server database has 14 main tables, plus the standard ASP.NET Core Ident
 | Hospital setup | **Department** | Id, Name, ConsultationFee |
 | | **DoctorSchedule** | Id, DoctorId, DayOfWeek, StartTime, EndTime |
 | Visits | **Appointment** | Id, DoctorId, PatientId, AppointmentDateTime, Status, Complaint, Diagnosis, Notes, RowVersion |
-| | **Prescription** | Id, AppointmentId, AdditionalNotes, Status, DispensedAt, PharmacistId, RowVersion |
+| | **Prescription** | Id, AppointmentId, AdditionalNotes, Status, CreatedAt, DispensedAt, PharmacistId, RowVersion |
 | | **PrescriptionItem** | Id, PrescriptionId, MedicineId, Dosage, Quantity |
 | Pharmacy | **Medicine** | Id, Name, Price, ExpiryDate, Quantity, LowStockThreshold, RowVersion |
 | Billing | **Receipt** | Id, AppointmentId, PaymentMethod, Amount, PaidAt, ReceptionistId |
@@ -436,3 +436,4 @@ These are the cards on our board, grouped by sprint. They follow our [timeline](
 | Appointment, Prescription and Department models and configurations; Medicine configuration | Seif Ahmed | Oct 3–5, 2026 |
 | Initial database migration (20 tables on SQL Server) | Seif Ahmed | Oct 5, 2026 |
 | Code reviews and merging (pull requests #1–#6) | Seif Ahmed, Moamen Mahmoud | Oct 3–5, 2026 |
+| Prescription creation date (`CreatedAt`) with its migration; updated a vulnerable security package | Seif Ahmed | Nov 27, 2026 |
