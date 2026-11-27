@@ -13,6 +13,7 @@ namespace HHMS.Api.Data.Configurations
 
             builder.Property(p => p.AdditionalNotes).HasMaxLength(500);
             builder.Property(p => p.RowVersion).IsRowVersion();
+            builder.Property(p => p.CreatedAt).IsRequired();
 
 
             builder.HasOne(p => p.Appointment)

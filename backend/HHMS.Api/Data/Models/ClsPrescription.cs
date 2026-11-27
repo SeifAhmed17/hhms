@@ -6,6 +6,7 @@ namespace HHMS.Api.Models
         public Guid AppointmentId { get; set; }
         public string? AdditionalNotes { get; set; }
         public EnPrescriptionStatus PrescriptionStatus { get; set; } = EnPrescriptionStatus.Pending;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? DispensedAt { get; set; }
         public Guid? PharmacistId { get; set; }
         public byte[] RowVersion { get; set; } = null!;

@@ -419,6 +419,9 @@ namespace HHMS.Api.Data.Migrations
                     b.Property<Guid>("AppointmentId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<DateTime?>("DispensedAt")
                         .HasColumnType("datetime2");
 

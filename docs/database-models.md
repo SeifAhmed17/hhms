@@ -201,6 +201,7 @@ The medicines a doctor prescribes during an appointment. The medicines themselve
 | `AppointmentId` | `Guid` | ✅ | The visit this prescription came from → `ClsAppointment.Id`. | `3f2a9c1e-…` |
 | `AdditionalNotes` | `string` | ❌ | General instructions for the whole prescription. | `Take after meals.` |
 | `Status` | `EnPrescriptionStatus` | ✅ | `Pending` until the pharmacist dispenses it, then `Dispensed`. The pharmacy queue shows all `Pending` prescriptions. | `Pending` |
+| `CreatedAt` | `DateTime` | ✅ | When the doctor wrote it (UTC), set automatically. Patients see it on their prescriptions, and the pharmacy queue lists the oldest first. | `2026-11-08 10:40` |
 | `DispensedAt` | `DateTime` | ❌ | When it was dispensed. Empty while pending. | `2026-11-08 11:15` |
 | `PharmacistId` | `Guid` | ❌ | Who dispensed it → `ClsPharmacist.Id`. Empty while pending. | `3f2a9c1e-…` |
 | `RowVersion` | `byte[]` | ✅ | Concurrency token. Two pharmacists can't dispense the same prescription twice. | *(automatic)* |
