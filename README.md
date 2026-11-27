@@ -160,6 +160,7 @@ Every table and column is explained in detail in [docs/database-models.md](docs/
 |---|---|---|
 | Project proposal | October 11, 2026 | [PDF](docs/deliverables/HHMS%20-%20Project%20Proposal.pdf) · [Word](docs/deliverables/HHMS%20-%20Project%20Proposal.docx) |
 | Project management plan | October 11, 2026 | [PDF](docs/deliverables/HHMS%20-%20Project%20Management%20Plan.pdf) · [Word](docs/deliverables/HHMS%20-%20Project%20Management%20Plan.docx) |
+| System requirements | November 30, 2026 | [PDF](docs/deliverables/HHMS%20-%20System%20Requirements.pdf) · [Word](docs/deliverables/HHMS%20-%20System%20Requirements.docx) |
 | Demonstration, presentation and documentation | December 25, 2026 | To come |
 
 ## Timeline
@@ -437,3 +438,4 @@ These are the cards on our board, grouped by sprint. They follow our [timeline](
 | Initial database migration (20 tables on SQL Server) | Seif Ahmed | Oct 5, 2026 |
 | Code reviews and merging (pull requests #1–#6) | Seif Ahmed, Moamen Mahmoud | Oct 3–5, 2026 |
 | Prescription creation date (`CreatedAt`) with its migration; updated a vulnerable security package | Seif Ahmed | Nov 27, 2026 |
+| System requirements document | Whole team | Nov 30, 2026 |
