@@ -1,19 +1,35 @@
-import { Link } from "@tanstack/react-router";
-import { ShieldX } from "lucide-react";
-import { useAuth, LANDING } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, Home, ShieldX } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function NotAllowed() {
-  const { user } = useAuth();
   return (
-    <div className="flex min-h-[60vh] items-center justify-center px-4">
-      <div className="max-w-md text-center">
-        <ShieldX className="mx-auto size-10 text-muted-foreground" aria-hidden />
-        <h1 className="mt-4 text-2xl">Not allowed</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Your account doesn't have access to this page.</p>
-        <Button asChild className="mt-6">
-          <Link to={user ? LANDING[user.role] : "/login"}>Go to my start page</Link>
-        </Button>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-50 px-4 py-8">
+      <div className="pointer-events-none absolute -left-32 -top-32 size-96 rounded-full bg-destructive/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-40 -right-32 size-[30rem] rounded-full bg-primary/10 blur-3xl" />
+      <div className="relative w-full max-w-lg rounded-3xl border border-border bg-white p-8 text-center shadow-xl shadow-slate-900/5 sm:p-12">
+        <span className="mx-auto flex size-16 items-center justify-center rounded-2xl border border-destructive-border bg-destructive-tint text-destructive">
+          <ShieldX className="size-8" aria-hidden />
+        </span>
+        <p className="mt-6 text-xs font-bold uppercase tracking-[0.2em] text-destructive">
+          Access restricted
+        </p>
+        <h1 className="mt-2 text-6xl font-semibold tracking-tight text-slate-900">403</h1>
+        <h2 className="mt-2 text-xl font-semibold">You don&apos;t have access to this page</h2>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+          Please contact your administrator if you believe you should be able to view this page.
+        </p>
+        <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <Button variant="outline" onClick={() => window.history.back()}>
+            <ArrowLeft aria-hidden />
+            Go back
+          </Button>
+          <Link to="/" className={cn(buttonVariants(), "no-underline")}>
+            <Home aria-hidden />
+            Back to home
+          </Link>
+        </div>
       </div>
     </div>
   );

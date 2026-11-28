@@ -1,83 +1,173 @@
 import { useState } from "react";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "react-router-dom";
+import { getIn, useFormik } from "formik";
+import * as yup from "yup";
 import { toast } from "sonner";
 import { auth } from "@/api";
 import { handleApiError, isStatus } from "@/lib/api-errors";
+import { emailValidation, passwordValidation, personValidationSchema } from "@/lib/validation";
 import { AuthLayout } from "@/components/app/auth-layout";
 import { SubmitButton } from "@/components/app/common";
-import { emptyPerson, Field, PersonFieldsEditor, toPersonFields } from "@/components/app/person-fields";
+import {
+  emptyPerson,
+  Field,
+  PersonFieldsEditor,
+  toPersonFields,
+} from "@/components/app/person-fields";
 import { Input } from "@/components/ui/input";
 
-export const Route = createFileRoute("/signup")({
-  head: () => ({
-    meta: [
-      { title: "Create a patient account — HHMS" },
-      { name: "description", content: "Register as a patient at Hurghada Hospital to book appointments online." },
-      { property: "og:title", content: "Create a patient account — HHMS" },
-      { property: "og:description", content: "Register as a patient at Hurghada Hospital to book appointments online." },
-    ],
-  }),
-  component: SignupPage,
+const signupSchema = yup.object({
+  email: emailValidation,
+  password: passwordValidation,
+  confirm: yup
+    .string()
+    .oneOf([yup.ref("password")], "Passwords do not match.")
+    .required("Confirm your password."),
+  person: personValidationSchema,
 });
 
-function SignupPage() {
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
-  const [person, setPerson] = useState(emptyPerson());
-  const [errors, setErrors] = useState<Record<string, string[]>>({});
-  const [busy, setBusy] = useState(false);
+const personFieldNames = [
+  "firstName",
+  "lastName",
+  "nationalId",
+  "passportNumber",
+  "gender",
+  "dateOfBirth",
+  "country",
+  "governorate",
+  "phoneNumbers",
+];
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    const local: Record<string, string[]> = {};
-    if (!email.trim()) local.email = ["Email is required."];
-    if (password.length < 8) local.password = ["Use at least 8 characters."];
-    if (password !== confirm) local.confirm = ["Passwords do not match."];
-    if (Object.keys(local).length) return setErrors(local);
-    setBusy(true);
-    setErrors({});
+export default function SignupPage() {
+  const navigate = useNavigate();
+  const [apiErrors, setApiErrors] = useState<Record<string, string[]>>({});
+
+  async function submit(values: {
+    email: string;
+    password: string;
+    confirm: string;
+    person: ReturnType<typeof emptyPerson>;
+  }) {
+    setApiErrors({});
     try {
-      await auth.register({ email: email.trim(), password, ...toPersonFields(person) });
+      await auth.register({
+        email: values.email.trim(),
+        password: values.password,
+        ...toPersonFields(values.person),
+      });
       toast.success("Account created. You can log in now.");
-      navigate({ to: "/login" });
+      navigate("/login");
     } catch (err) {
       if (isStatus(err, 409)) {
         toast.error("Account exists, please log in.", { duration: Infinity });
-        navigate({ to: "/login" });
-      } else setErrors(handleApiError(err));
-    } finally {
-      setBusy(false);
+        navigate("/login");
+      } else setApiErrors(handleApiError(err));
     }
   }
 
+  const formik = useFormik({
+    initialValues: { email: "", password: "", confirm: "", person: emptyPerson() },
+    validationSchema: signupSchema,
+    onSubmit: submit,
+  });
+  const {
+    values,
+    errors,
+    touched,
+    handleChange,
+    handleBlur,
+    setFieldValue,
+    handleSubmit,
+    isSubmitting,
+  } = formik;
+  const personErrors = Object.fromEntries(
+    personFieldNames.flatMap((name) => {
+      const serverErrors = apiErrors[name];
+      const validationError = getIn(errors, `person.${name}`);
+      const wasTouched = getIn(touched, `person.${name}`);
+      const messages =
+        serverErrors ??
+        (wasTouched && typeof validationError === "string" ? [validationError] : undefined);
+      return messages ? [[name, messages]] : [];
+    }),
+  );
+
   return (
-    <AuthLayout title="Create a patient account" subtitle="Staff accounts are created by the hospital administrator." wide>
-      <form onSubmit={submit} className="space-y-6" noValidate>
+    <AuthLayout
+      title="Create a patient account"
+      subtitle="Staff accounts are created by the hospital administrator."
+      wide
+    >
+      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
         <section className="space-y-4">
           <h2 className="text-lg">Login details</h2>
-          <Field id="email" label="Email" required errors={errors.email}>
-            <Input id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <Field
+            id="email"
+            label="Email"
+            required
+            errors={touched.email && errors.email ? [errors.email] : apiErrors["email"]}
+          >
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+            />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field id="password" label="Password" required errors={errors.password} hint="At least 8 characters.">
-              <Input id="password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Field
+              id="password"
+              label="Password"
+              required
+              errors={
+                touched.password && errors.password ? [errors.password] : apiErrors["password"]
+              }
+              hint="At least 8 characters."
+            >
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                value={values.password}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
             </Field>
-            <Field id="confirm" label="Confirm password" required errors={errors.confirm}>
-              <Input id="confirm" type="password" autoComplete="new-password" value={confirm} onChange={(e) => setConfirm(e.target.value)} />
+            <Field
+              id="confirm"
+              label="Confirm password"
+              required
+              errors={touched.confirm && errors.confirm ? [errors.confirm] : undefined}
+            >
+              <Input
+                id="confirm"
+                name="confirm"
+                type="password"
+                autoComplete="new-password"
+                value={values.confirm}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
             </Field>
           </div>
         </section>
         <section className="space-y-4">
           <h2 className="text-lg">Personal details</h2>
-          <PersonFieldsEditor value={person} onChange={setPerson} errors={errors} />
+          <PersonFieldsEditor
+            value={values.person}
+            onChange={(person) => void setFieldValue("person", person)}
+            errors={personErrors}
+          />
         </section>
         <div className="flex flex-wrap items-center justify-between gap-4 border-t pt-6">
           <Link to="/login" className="text-sm font-medium text-primary hover:underline">
             I already have an account
           </Link>
-          <SubmitButton type="submit" loading={busy}>
+          <SubmitButton type="submit" loading={isSubmitting}>
             Create account
           </SubmitButton>
         </div>

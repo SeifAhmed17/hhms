@@ -1,4 +1,3 @@
-import { cva } from "class-variance-authority";
 import {
   AlertTriangle,
   Ban,
@@ -8,34 +7,40 @@ import {
   Clock,
   LogIn,
   PackageCheck,
-  XCircle,
   type LucideIcon,
 } from "lucide-react";
 import type { AppointmentStatus, PrescriptionStatus } from "@/api";
 import { cn } from "@/lib/utils";
 
-const badge = cva(
-  "inline-flex items-center gap-1 rounded-sm border px-1.5 py-0.5 text-xs font-medium whitespace-nowrap [&_svg]:size-3.5",
-  {
-    variants: {
-      tone: {
-        info: "bg-primary-tint text-primary border-info-border",
-        teal: "bg-teal-tint text-teal border-teal/30",
-        success: "bg-success-tint text-success border-success-border",
-        warning: "bg-warning-tint text-warning border-warning-border",
-        danger: "bg-destructive-tint text-destructive border-destructive-border",
-        neutral: "bg-muted text-muted-foreground border-border",
-      },
-    },
-    defaultVariants: { tone: "neutral" },
-  },
-);
-
 export type Tone = "info" | "teal" | "success" | "warning" | "danger" | "neutral";
+const toneClasses: Record<Tone, string> = {
+  info: "border-info-border bg-primary-tint text-primary",
+  teal: "border-teal/30 bg-teal-tint text-teal",
+  success: "border-success-border bg-success-tint text-success",
+  warning: "border-warning-border bg-warning-tint text-warning",
+  danger: "border-destructive-border bg-destructive-tint text-destructive",
+  neutral: "border-border bg-slate-100 text-slate-600",
+};
 
-export function StatusPill({ tone, icon: Icon, children, className }: { tone: Tone; icon: LucideIcon; children: React.ReactNode; className?: string }) {
+export function StatusPill({
+  tone,
+  icon: Icon,
+  children,
+  className,
+}: {
+  tone: Tone;
+  icon: LucideIcon;
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <span className={cn(badge({ tone }), className)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1 text-xs font-semibold [&_svg]:size-3.5",
+        toneClasses[tone],
+        className,
+      )}
+    >
       <Icon aria-hidden />
       {children}
     </span>
@@ -50,25 +55,38 @@ const APPT: Record<AppointmentStatus, { tone: Tone; icon: LucideIcon; label: str
 };
 export function AppointmentBadge({ status }: { status: AppointmentStatus }) {
   const s = APPT[status];
-  return <StatusPill tone={s.tone} icon={s.icon}>{s.label}</StatusPill>;
+  return (
+    <StatusPill tone={s.tone} icon={s.icon}>
+      {s.label}
+    </StatusPill>
+  );
 }
 export function PaidBadge({ paid }: { paid: boolean }) {
   return paid ? (
-    <StatusPill tone="success" icon={CircleDollarSign}>Paid</StatusPill>
+    <StatusPill tone="success" icon={CircleDollarSign}>
+      Paid
+    </StatusPill>
   ) : (
-    <StatusPill tone="warning" icon={Clock}>Unpaid</StatusPill>
+    <StatusPill tone="warning" icon={Clock}>
+      Unpaid
+    </StatusPill>
   );
 }
 export function PrescriptionBadge({ status }: { status: PrescriptionStatus }) {
   return status === "Dispensed" ? (
-    <StatusPill tone="success" icon={PackageCheck}>Dispensed</StatusPill>
+    <StatusPill tone="success" icon={PackageCheck}>
+      Dispensed
+    </StatusPill>
   ) : (
-    <StatusPill tone="warning" icon={Clock}>Pending</StatusPill>
+    <StatusPill tone="warning" icon={Clock}>
+      Pending
+    </StatusPill>
   );
 }
 export function DangerPill({ children }: { children: React.ReactNode }) {
-  return <StatusPill tone="danger" icon={AlertTriangle}>{children}</StatusPill>;
-}
-export function ErrorPill({ children }: { children: React.ReactNode }) {
-  return <StatusPill tone="danger" icon={XCircle}>{children}</StatusPill>;
+  return (
+    <StatusPill tone="danger" icon={AlertTriangle}>
+      {children}
+    </StatusPill>
+  );
 }

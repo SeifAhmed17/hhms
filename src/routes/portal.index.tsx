@@ -1,7 +1,5 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { Navigate } from "react-router-dom";
 
-export const Route = createFileRoute("/portal/")({
-  beforeLoad: () => {
-    throw redirect({ to: "/portal/appointments" });
-  },
-});
+export default function PortalIndex() {
+  return <Navigate to="/portal/appointments" replace />;
+}

@@ -1,23 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { CheckCircle2 } from "lucide-react";
 import { BookingFlow } from "@/components/app/booking-flow";
 import { PageHeader, Panel } from "@/components/app/common";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { fmtDateTime } from "@/lib/format";
 
-export const Route = createFileRoute("/portal/book")({
-  head: () => ({
-    meta: [
-      { title: "Book an appointment — HHMS" },
-      { name: "description", content: "Choose a department, doctor and time to book a hospital appointment." },
-      { property: "og:title", content: "Book an appointment — HHMS" },
-      { property: "og:description", content: "Choose a department, doctor and time to book a hospital appointment." },
-    ],
-  }),
-  component: BookPage,
-});
-
-function BookPage() {
+export default function BookPage() {
   return (
     <>
       <PageHeader title="Book an appointment" />
@@ -31,9 +20,9 @@ function BookPage() {
               <br />
               <span className="tnum">{fmtDateTime(a.appointmentDateTime)}</span>
             </p>
-            <Button asChild className="mt-6">
-              <Link to="/portal/appointments">View my appointments</Link>
-            </Button>
+            <Link to="/portal/appointments" className={cn(buttonVariants(), "mt-6")}>
+              View my appointments
+            </Link>
           </Panel>
         )}
       />

@@ -1,6 +1,5 @@
 @import "tailwindcss" source(none);
 @source "../src";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -83,16 +82,17 @@
 }
 
 :root {
-  --radius: 0.375rem;
-  --font-sans: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius: 0.75rem;
+  --font-sans:
+    Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: "Source Code Pro", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-  --background: oklch(0.981 0.005 247.9);
+  --background: oklch(0.975 0.009 242.4);
   --foreground: oklch(0.219 0.051 251.7);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.219 0.051 251.7);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.219 0.051 251.7);
-  --primary: oklch(0.530 0.148 250.4);
+  --primary: oklch(0.53 0.148 250.4);
   --primary-hover: oklch(0.461 0.128 250.4);
   --primary-tint: oklch(0.956 0.016 245.1);
   --primary-foreground: oklch(1 0 0);
@@ -100,9 +100,9 @@
   --secondary-foreground: oklch(0.219 0.051 251.7);
   --teal: oklch(0.526 0.088 194.8);
   --teal-tint: oklch(0.955 0.018 196.9);
-  --muted: oklch(0.981 0.005 247.9);
+  --muted: oklch(0.966 0.011 242.5);
   --muted-foreground: oklch(0.521 0.034 251.5);
-  --fg-secondary: oklch(0.430 0.042 247.6);
+  --fg-secondary: oklch(0.43 0.042 247.6);
   --disabled: oklch(0.723 0.025 250.2);
   --accent: oklch(0.956 0.016 245.1);
   --accent-foreground: oklch(0.219 0.051 251.7);
@@ -111,29 +111,29 @@
   --destructive-border: oklch(0.795 0.089 15.8);
   --destructive-foreground: oklch(1 0 0);
   --success: oklch(0.511 0.113 157.6);
-  --success-tint: oklch(0.957 0.020 159.8);
-  --success-border: oklch(0.820 0.073 160.0);
+  --success-tint: oklch(0.957 0.02 159.8);
+  --success-border: oklch(0.82 0.073 160);
   --warning: oklch(0.494 0.109 66.9);
   --warning-tint: oklch(0.969 0.035 87.1);
   --warning-border: oklch(0.834 0.141 85.4);
   --info-border: oklch(0.809 0.068 244.6);
-  --border: oklch(0.929 0.010 252.8);
-  --border-strong: oklch(0.863 0.020 252.9);
-  --input: oklch(0.863 0.020 252.9);
-  --ring: oklch(0.530 0.148 250.4);
-  --chart-1: oklch(0.530 0.148 250.4);
+  --border: oklch(0.916 0.014 244.1);
+  --border-strong: oklch(0.863 0.02 252.9);
+  --input: oklch(0.863 0.02 252.9);
+  --ring: oklch(0.53 0.148 250.4);
+  --chart-1: oklch(0.53 0.148 250.4);
   --chart-2: oklch(0.526 0.088 194.8);
   --chart-3: oklch(0.723 0.025 250.2);
   --chart-4: oklch(0.521 0.034 251.5);
-  --chart-5: oklch(0.863 0.020 252.9);
+  --chart-5: oklch(0.863 0.02 252.9);
   --sidebar: oklch(0.981 0.005 247.9);
   --sidebar-foreground: oklch(0.219 0.051 251.7);
-  --sidebar-primary: oklch(0.530 0.148 250.4);
+  --sidebar-primary: oklch(0.53 0.148 250.4);
   --sidebar-primary-foreground: oklch(1 0 0);
   --sidebar-accent: oklch(0.956 0.016 245.1);
-  --sidebar-accent-foreground: oklch(0.530 0.148 250.4);
-  --sidebar-border: oklch(0.929 0.010 252.8);
-  --sidebar-ring: oklch(0.530 0.148 250.4);
+  --sidebar-accent-foreground: oklch(0.53 0.148 250.4);
+  --sidebar-border: oklch(0.929 0.01 252.8);
+  --sidebar-ring: oklch(0.53 0.148 250.4);
   --shadow-sm: 0 1px 2px oklch(0.35 0.1 280 / 0.08), 0 1px 1px oklch(0 0 0 / 0.04);
   --shadow-md: 0 4px 12px -2px oklch(0.35 0.1 280 / 0.16), 0 2px 6px -1px oklch(0 0 0 / 0.08);
   --shadow-lg: 0 16px 40px -8px oklch(0.35 0.1 280 / 0.25), 0 8px 16px -8px oklch(0 0 0 / 0.1);
@@ -149,19 +149,52 @@
     font-family: var(--font-sans);
     font-feature-settings: "cv11" 1;
   }
-  h1, h2, h3 { font-weight: 600; letter-spacing: -0.01em; }
+  h1,
+  h2,
+  h3 {
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { transition: none !important; animation: none !important; }
+    *,
+    *::before,
+    *::after {
+      transition: none !important;
+      animation: none !important;
+    }
   }
 }
 
-@utility tnum { font-feature-settings: "tnum" 1, "cv11" 1; }
-@utility mono-id { font-family: var(--font-mono); font-size: 13px; font-feature-settings: "zero" 1; }
+@utility tnum {
+  font-feature-settings:
+    "tnum" 1,
+    "cv11" 1;
+}
+@utility mono-id {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-feature-settings: "zero" 1;
+}
 
 @media print {
-  .no-print { display: none !important; }
-  body { background: white; }
-  body:has(.print-area) * { visibility: hidden; }
-  body:has(.print-area) .print-area, body:has(.print-area) .print-area * { visibility: visible; }
-  .print-area { position: absolute; left: 0; top: 0; width: 100%; border: none !important; }
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+  body:has(.print-area) * {
+    visibility: hidden;
+  }
+  body:has(.print-area) .print-area,
+  body:has(.print-area) .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    border: none !important;
+  }
 }

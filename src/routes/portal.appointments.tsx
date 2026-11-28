@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarPlus } from "lucide-react";
 import { toast } from "sonner";
@@ -7,23 +7,18 @@ import { appointments, type AppointmentSummary } from "@/api";
 import { fmtDate, fmtTime } from "@/lib/format";
 import { handleApiError } from "@/lib/api-errors";
 import { AppointmentBadge, PaidBadge } from "@/components/app/badges";
-import { ConfirmDialog, EmptyState, PageHeader, Pager, Panel, SkeletonRows } from "@/components/app/common";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  ConfirmDialog,
+  EmptyState,
+  PageHeader,
+  Pager,
+  Panel,
+  SkeletonRows,
+} from "@/components/app/common";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
-export const Route = createFileRoute("/portal/appointments")({
-  head: () => ({
-    meta: [
-      { title: "My appointments — HHMS" },
-      { name: "description", content: "See your upcoming and past hospital appointments." },
-      { property: "og:title", content: "My appointments — HHMS" },
-      { property: "og:description", content: "See your upcoming and past hospital appointments." },
-    ],
-  }),
-  component: MyAppointments,
-});
-
-function MyAppointments() {
+export default function MyAppointments() {
   const [tab, setTab] = useState<"upcoming" | "past">("upcoming");
   const [page, setPage] = useState(1);
   const [cancelling, setCancelling] = useState<AppointmentSummary | null>(null);
@@ -32,7 +27,10 @@ function MyAppointments() {
 
   const q = useQuery({
     queryKey: ["appointments", "mine", tab, page],
-    queryFn: () => appointments.mine(tab === "upcoming" ? { from: now, page, pageSize: 10 } : { to: now, page, pageSize: 10 }),
+    queryFn: () =>
+      appointments.mine(
+        tab === "upcoming" ? { from: now, page, pageSize: 10 } : { to: now, page, pageSize: 10 },
+      ),
   });
 
   return (
@@ -40,28 +38,56 @@ function MyAppointments() {
       <PageHeader
         title="My appointments"
         actions={
-          <Button asChild>
-            <Link to="/portal/book">
-              <CalendarPlus /> Book
-            </Link>
-          </Button>
+          <Link to="/portal/book" className={buttonVariants()}>
+            <CalendarPlus /> Book
+          </Link>
         }
       />
-      <Tabs value={tab} onValueChange={(v) => { setTab(v as typeof tab); setPage(1); }} className="mb-4">
-        <TabsList>
-          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
-          <TabsTrigger value="past">Past</TabsTrigger>
-        </TabsList>
-      </Tabs>
+      <div
+        role="tablist"
+        aria-label="Appointment list"
+        className="mb-5 inline-flex gap-1 rounded-2xl border border-border bg-white p-1.5 shadow-sm"
+      >
+        {(["upcoming", "past"] as const).map((value) => (
+          <button
+            key={value}
+            type="button"
+            role="tab"
+            aria-selected={tab === value}
+            onClick={() => {
+              setTab(value);
+              setPage(1);
+            }}
+            className={cn(
+              "rounded-xl px-5 py-2.5 text-sm font-semibold capitalize transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/15",
+              tab === value
+                ? "bg-primary text-white shadow-sm"
+                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900",
+            )}
+          >
+            {value}
+          </button>
+        ))}
+      </div>
 
       {q.isLoading ? (
-        <Panel><SkeletonRows rows={3} /></Panel>
+        <Panel>
+          <SkeletonRows rows={3} />
+        </Panel>
       ) : !q.data?.items.length ? (
         <Panel>
           <EmptyState
             title={tab === "upcoming" ? "No upcoming appointments" : "No past appointments"}
-            description={tab === "upcoming" ? "When you book an appointment it will appear here." : undefined}
-            action={tab === "upcoming" ? <Button asChild><Link to="/portal/book">Book an appointment</Link></Button> : undefined}
+            description={
+              tab === "upcoming" ? "When you book an appointment it will appear here." : undefined
+            }
+            action={
+              tab === "upcoming" ? (
+                <Link to="/portal/book" className={buttonVariants()}>
+                  Book an appointment
+                </Link>
+              ) : undefined
+            }
           />
         </Panel>
       ) : (
@@ -77,7 +103,9 @@ function MyAppointments() {
                     <p className="mt-0.5 text-sm text-fg-secondary">
                       {a.doctor.fullName} · {a.doctor.departmentName}
                     </p>
-                    {a.complaint && <p className="mt-1 text-sm text-muted-foreground">{a.complaint}</p>}
+                    {a.complaint && (
+                      <p className="mt-1 text-sm text-muted-foreground">{a.complaint}</p>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <AppointmentBadge status={a.status} />
@@ -95,7 +123,12 @@ function MyAppointments() {
             ))}
           </ul>
           <Panel className="mt-3 border-0 bg-transparent">
-            <Pager page={q.data.page} pageSize={q.data.pageSize} totalCount={q.data.totalCount} onPage={setPage} />
+            <Pager
+              page={q.data.page}
+              pageSize={q.data.pageSize}
+              totalCount={q.data.totalCount}
+              onPage={setPage}
+            />
           </Panel>
         </>
       )}
@@ -104,7 +137,11 @@ function MyAppointments() {
         open={!!cancelling}
         onOpenChange={(o) => !o && setCancelling(null)}
         title={cancelling ? `Cancel your appointment with ${cancelling.doctor.fullName}?` : ""}
-        description={cancelling ? `${fmtDate(cancelling.appointmentDateTime)} at ${fmtTime(cancelling.appointmentDateTime)}. This can't be undone.` : undefined}
+        description={
+          cancelling
+            ? `${fmtDate(cancelling.appointmentDateTime)} at ${fmtTime(cancelling.appointmentDateTime)}. This can't be undone.`
+            : undefined
+        }
         confirmLabel="Cancel appointment"
         onConfirm={async () => {
           if (!cancelling) return;

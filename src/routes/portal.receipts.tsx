@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Printer } from "lucide-react";
 import { receipts, type Receipt } from "@/api";
@@ -7,24 +6,15 @@ import { fmtDate, fmtEGP } from "@/lib/format";
 import { EmptyState, PageHeader, Pager, Panel, SkeletonRows } from "@/components/app/common";
 import { ReceiptView } from "@/components/app/receipt-view";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Modal } from "@/components/app/modal";
 
-export const Route = createFileRoute("/portal/receipts")({
-  head: () => ({
-    meta: [
-      { title: "My receipts — HHMS" },
-      { name: "description", content: "Receipts for your paid hospital consultations." },
-      { property: "og:title", content: "My receipts — HHMS" },
-      { property: "og:description", content: "Receipts for your paid hospital consultations." },
-    ],
-  }),
-  component: ReceiptsPage,
-});
-
-function ReceiptsPage() {
+export default function ReceiptsPage() {
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState<Receipt | null>(null);
-  const q = useQuery({ queryKey: ["receipts", "mine", page], queryFn: () => receipts.mine({ page, pageSize: 20 }) });
+  const q = useQuery({
+    queryKey: ["receipts", "mine", page],
+    queryFn: () => receipts.mine({ page, pageSize: 20 }),
+  });
 
   return (
     <>
@@ -33,15 +23,23 @@ function ReceiptsPage() {
         {q.isLoading ? (
           <SkeletonRows rows={4} />
         ) : !q.data?.items.length ? (
-          <EmptyState title="No receipts yet" description="Receipts appear here after you pay at reception." />
+          <EmptyState
+            title="No receipts yet"
+            description="Receipts appear here after you pay at reception."
+          />
         ) : (
           <>
             <ul className="divide-y">
               {q.data.items.map((r) => (
                 <li key={r.id}>
-                  <button onClick={() => setOpen(r)} className="flex w-full flex-wrap items-center justify-between gap-3 px-4 py-3 text-left hover:bg-muted">
+                  <button
+                    onClick={() => setOpen(r)}
+                    className="flex w-full flex-wrap items-center justify-between gap-3 px-4 py-3 text-left hover:bg-muted"
+                  >
                     <span>
-                      <span className="tnum block font-medium">{fmtDate(r.appointmentDateTime)}</span>
+                      <span className="tnum block font-medium">
+                        {fmtDate(r.appointmentDateTime)}
+                      </span>
                       <span className="block text-sm text-muted-foreground">
                         {r.doctorName} · {r.departmentName} · {r.paymentMethod}
                       </span>
@@ -51,21 +49,28 @@ function ReceiptsPage() {
                 </li>
               ))}
             </ul>
-            <Pager page={q.data.page} pageSize={q.data.pageSize} totalCount={q.data.totalCount} onPage={setPage} />
+            <Pager
+              page={q.data.page}
+              pageSize={q.data.pageSize}
+              totalCount={q.data.totalCount}
+              onPage={setPage}
+            />
           </>
         )}
       </Panel>
-      <Dialog open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader className="no-print"><DialogTitle>Receipt</DialogTitle></DialogHeader>
-          {open && <ReceiptView r={open} />}
-          <div className="no-print flex justify-end">
-            <Button onClick={() => window.print()}>
-              <Printer /> Print
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <Modal
+        open={!!open}
+        onOpenChange={(isOpen) => !isOpen && setOpen(null)}
+        title="Receipt"
+        headerClassName="no-print"
+      >
+        {open && <ReceiptView r={open} />}
+        <div className="no-print flex justify-end">
+          <Button onClick={() => window.print()}>
+            <Printer /> Print
+          </Button>
+        </div>
+      </Modal>
     </>
   );
 }
